@@ -1,25 +1,29 @@
 local _,wt=...
-local host,panel,tab,scroll,rows
+local host,panel,tab,scroll,rows,searchBox
 local selection="all"
 local function refresh()
  if not panel or not panel:IsShown() then return end
- local data=wt:GetRows(selection)
- panel.subtitle:SetText(#data.." trainer-observed entries • Visit trainers to build the catalog")
+ local data=wt:GetRows(selection,searchBox and searchBox:GetText() or "")
+ local _,className=wt:GetCoAClass()
+ panel.subtitle:SetText((className or "Unknown").." • "..#data.." entries • Trainer-observed data only")
  FauxScrollFrame_Update(scroll,#data,#rows,22)
  local offset=FauxScrollFrame_GetOffset(scroll)
  for i,b in ipairs(rows) do
   local row=data[i+offset]
   if not row then b.entry=nil;b:Hide() else
-   local r=row.record;b.entry=r
+   local r=row.record;b.entry=r;b.verification=row.verification
    b.icon:SetTexture((r.spellID and select(3,GetSpellInfo(r.spellID))) or "Interface\\Icons\\INV_Misc_QuestionMark")
    b.name:SetText((r.requiredLevel and ("Lv "..r.requiredLevel.." ") or "")..(r.name or "Unknown")..(r.rank and r.rank~="" and " ("..r.rank..")" or ""))
-   b.cost:SetText(type(r.costCopper)=="number" and GetCoinTextureString(r.costCopper) or "")
+   b.cost:SetText(type(r.costCopper)=="number" and GetCoinTextureString(r.costCopper) or "—")
    b:Show()
   end
  end
 end
 function wt:RefreshUI()refresh()end
-local function show(value) if panel then if value then panel:Show();refresh()else panel:Hide()end end end
+local function show(value)
+ if not panel then return end
+ if value then panel:Show();refresh()else panel:Hide()end
+end
 local function create()
  if panel or not SpellBookFrame then return end
  host=SpellBookFrame
@@ -30,7 +34,7 @@ local function create()
  local title=panel:CreateFontString(nil,"OVERLAY","GameFontNormalLarge")
  title:SetPoint("TOPLEFT",22,-27);title:SetText("What's Training? CoA")
  local subtitle=panel:CreateFontString(nil,"OVERLAY","GameFontHighlightSmall")
- subtitle:SetPoint("TOPLEFT",22,-53);subtitle:SetWidth(340);subtitle:SetJustifyH("LEFT");panel.subtitle=subtitle
+ subtitle:SetPoint("TOPLEFT",22,-53);subtitle:SetWidth(360);subtitle:SetJustifyH("LEFT");panel.subtitle=subtitle
  local close=CreateFrame("Button",nil,panel,"UIPanelCloseButton");close:SetPoint("TOPRIGHT",-10,-10)
  close:SetScript("OnClick",function()show(false)end)
  local filters={{"all","All"},{"available","Available"},{"next","Next level"},{"future","Upcoming"},{"requirements","Requires"},{"known","Known"}}
@@ -39,12 +43,18 @@ local function create()
   b:SetSize(110,22);b:SetPoint("TOPLEFT",20+((i-1)%3)*116,-78-math.floor((i-1)/3)*26)
   b:SetText(f[2]);b:SetScript("OnClick",function()selection=f[1];refresh()end)
  end
+ searchBox=CreateFrame("EditBox","WhatsTrainingCoASearch",panel,"InputBoxTemplate")
+ searchBox:SetSize(280,20);searchBox:SetPoint("TOPLEFT",28,-138);searchBox:SetAutoFocus(false)
+ searchBox:SetScript("OnTextChanged",function()if scroll then FauxScrollFrame_SetOffset(scroll,0)end;refresh()end)
+ searchBox:SetScript("OnEscapePressed",function(self)self:ClearFocus()end)
+ local searchLabel=panel:CreateFontString(nil,"OVERLAY","GameFontHighlightSmall")
+ searchLabel:SetPoint("LEFT",searchBox,"RIGHT",8,0);searchLabel:SetText("Search")
  scroll=CreateFrame("ScrollFrame","WhatsTrainingCoAScroll",panel,"FauxScrollFrameTemplate")
- scroll:SetPoint("TOPLEFT",20,-145);scroll:SetPoint("BOTTOMRIGHT",-42,22)
+ scroll:SetPoint("TOPLEFT",20,-174);scroll:SetPoint("BOTTOMRIGHT",-42,22)
  scroll:SetScript("OnVerticalScroll",function(self,offset)FauxScrollFrame_OnVerticalScroll(self,offset,22,refresh)end)
  rows={}
  for i=1,10 do
-  local b=CreateFrame("Button",nil,panel);b:SetSize(345,22);b:SetPoint("TOPLEFT",24,-150-(i-1)*22)
+  local b=CreateFrame("Button",nil,panel);b:SetSize(345,22);b:SetPoint("TOPLEFT",24,-178-(i-1)*22)
   local icon=b:CreateTexture(nil,"ARTWORK");icon:SetSize(18,18);icon:SetPoint("LEFT");b.icon=icon
   local name=b:CreateFontString(nil,"OVERLAY","GameFontHighlightSmall");name:SetPoint("LEFT",icon,"RIGHT",4,0);name:SetWidth(235);name:SetJustifyH("LEFT");b.name=name
   local cost=b:CreateFontString(nil,"OVERLAY","GameFontHighlightSmall");cost:SetPoint("RIGHT",0,0);cost:SetWidth(100);cost:SetJustifyH("RIGHT");b.cost=cost
@@ -53,19 +63,32 @@ local function create()
    GameTooltip:SetOwner(self,"ANCHOR_RIGHT")
    if self.entry.spellID and GameTooltip.SetSpellByID then GameTooltip:SetSpellByID(self.entry.spellID) else GameTooltip:AddLine(self.entry.name or "Unknown spell")end
    if self.entry.requiredLevel then GameTooltip:AddLine("Required level: "..self.entry.requiredLevel)end
+   GameTooltip:AddLine("Source: "..(self.verification or "UNKNOWN"),0.8,0.8,0.8)
    GameTooltip:Show()
   end)
   b:SetScript("OnLeave",function()GameTooltip:Hide()end)
   rows[i]=b
  end
  tab=CreateFrame("CheckButton","WhatsTrainingCoASpellbookTab",host,"SpellBookSkillLineTabTemplate")
- tab:SetSize(34,34);tab:SetPoint("TOPLEFT",host,"TOPRIGHT",-8,-100)
+ tab:SetSize(32,32)
  tab:SetNormalTexture("Interface\\Icons\\INV_Misc_QuestionMark")
  tab:SetScript("OnClick",function()show(not panel:IsShown())end)
- tab:SetScript("OnEnter",function(self)
-  GameTooltip:SetOwner(self,"ANCHOR_RIGHT");GameTooltip:AddLine("What's Training? CoA");GameTooltip:Show()
- end)
+ tab:SetScript("OnEnter",function(self)GameTooltip:SetOwner(self,"ANCHOR_RIGHT");GameTooltip:AddLine("What's Training? CoA");GameTooltip:Show()end)
  tab:SetScript("OnLeave",function()GameTooltip:Hide()end)
+ local function position()
+  if not tab or not host then return end
+  local anchor
+  for i=1,10 do
+   local candidate=_G["SpellBookSkillLineTab"..i]
+   if candidate and candidate~=tab and candidate:IsShown() then anchor=candidate end
+  end
+  tab:ClearAllPoints()
+  if anchor then tab:SetPoint("TOP",anchor,"BOTTOM",0,-4)
+  else tab:SetPoint("TOPLEFT",host,"TOPRIGHT",-8,-110)end
+ end
+ host:HookScript("OnShow",position)
+ tab:SetScript("OnShow",position)
+ position()
  panel:SetScript("OnShow",function()tab:SetChecked(true)end)
  panel:SetScript("OnHide",function()tab:SetChecked(false)end)
  host:HookScript("OnHide",function()show(false)end)

@@ -1,28 +1,22 @@
 # What's Training? CoA
 
-> **[⬇ Download v1.3.2-dev](https://github.com/uncle-bone/WhatsTraining-CoA/releases/download/v1.3.2-dev/WhatsTraining-CoA-v1.3.2-dev.zip)** — development prerelease; trainer assignments remain unverified.
+A Conquest Reborn (WoW 3.3.5a) trainer tracker, adapted by **Uncle Bone** from the [What's Training?](https://github.com/fusionpit/WhatsTraining) interaction model.
 
-A Conquest Reborn (WoW 3.3.5a) trainer tracker adapting the original [What's Training?](https://github.com/fusionpit/WhatsTraining) interaction model.
+Open the spellbook and click its attached **?** tab. There is no permanent floating launcher.
 
-**Use the ? tab attached to the spellbook. There is no permanent on-screen floating button.** Open the spellbook, click the ? icon on its right edge, and view categorized trainer spells with costs and spell tooltips.
+## Current development features
+- Spellbook-attached page with Available, Next Level, Upcoming, Requires and Known filters.
+- Search and spell tooltips including verification status.
+- Captures services actually observed at trainers, preserving per-character status and accumulating an offline catalog by custom class across the same SavedVariables account.
+- Displays name, rank, required level, and cost when the client API supplies them.
+- Recognizes the 21 custom Conquest of Azeroth class names.
+- Does not transmit data or join chat channels.
 
-## Functionality
-
-- Spellbook-attached trainer view (Available, Next Level, Upcoming, Requires, Known).
-- Captures observed services from class trainers per character; retains them in SavedVariables.
-- Displays spell name, rank, level, cost and tooltip when available from the modified 3.3.5a client.
-- Includes all 21 custom Conquest of Azeroth class names in the class registry.
-- Does not transmit chat messages or replace other addon channels.
-- Intended for Blizzard UI, DragonUI and ElvUI; live compatibility testing is still necessary.
-
-## Limitations
-
-The 13,311 rank records extracted from local client data do not prove trainer/class assignments. Until the trainer assignments are verified, future spells not yet observed cannot be displayed comprehensively. In-game API compatibility and UI overlap need verification.
+## Evidence and limitations
+The rank chains in [CoA-Research](https://github.com/uncle-bone/CoA-Research) are not proof of trainer assignments. Only captured trainer services are marked VERIFIED. Zero authoritative complete trainer-to-spell or pricing maps have yet been established. Past costs and availability may be outdated. Opening a trainer refreshes them. UI placement and trainer API compatibility need in-game verification.
 
 ## Installation
+Extract the ZIP so that `Interface/AddOns/WhatsTraining-CoA/WhatsTraining-CoA.toc` exists. Open the spellbook and its ? tab. Visit trainers to build the catalog. Diagnostics: `/wtcoa status` and `/wtcoa scan`.
 
-Extract `WhatsTraining-CoA` into `Interface/AddOns`, ensuring the addon contains `WhatsTraining-CoA.toc` directly inside. Open the in-game spellbook, then its ? tab. Open a trainer to populate observations. Diagnostics: `/wtcoa status` and `/wtcoa scan`.
-
-## Credits and license
-
-CoA adaptation: **Uncle Bone** ([contact](https://github.com/downingwow)). Original: [fusionpit/WhatsTraining](https://github.com/fusionpit/WhatsTraining). WotLK port: [anhility/WhatsTraining_WotLK](https://github.com/anhility/WhatsTraining_WotLK). Preserve existing upstream MIT license notices.
+## Credits
+Maintainer: [Uncle Bone](https://github.com/uncle-bone). Original: [fusionpit/WhatsTraining](https://github.com/fusionpit/WhatsTraining). WotLK port: [anhility/WhatsTraining_WotLK](https://github.com/anhility/WhatsTraining_WotLK). The upstream MIT license notice remains included.
