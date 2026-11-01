@@ -1,5 +1,7 @@
 # What's Training? CoA
 
+> **[⬇ Download v1.3.2-dev](https://github.com/uncle-bone/WhatsTraining-CoA/releases/download/v1.3.2-dev/WhatsTraining-CoA-v1.3.2-dev.zip)** — development prerelease; trainer assignments remain unverified.
+
 A Conquest Reborn (WoW 3.3.5a) trainer tracker adapting the original [What's Training?](https://github.com/fusionpit/WhatsTraining) interaction model.
 
 **Use the ? tab attached to the spellbook. There is no permanent on-screen floating button.** Open the spellbook, click the ? icon on its right edge, and view categorized trainer spells with costs and spell tooltips.
