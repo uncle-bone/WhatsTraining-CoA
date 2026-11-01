@@ -1,8 +1,8 @@
 ## Interface: 30300
 ## Title: What's Training? CoA
-## Notes: Conquest Reborn trainer preview with draggable launcher
-## Version: 1.3.1
-## Author: Uncle Bone (CoA adaptation; see LICENSE)
+## Notes: Trainer abilities in the spellbook for Conquest Reborn
+## Version: 1.3.2-dev
+## Author: Uncle Bone (CoA adaptation; preserve upstream license)
 ## SavedVariables: WhatsTrainingCoADB
 ## X-Website: https://github.com/uncle-bone/WhatsTraining-CoA
 
