@@ -1,30 +1,26 @@
 # What's Training? CoA
 
-A Conquest Reborn (WoW 3.3.5a) trainer-spell tracker inspired by [fusionpit/WhatsTraining](https://github.com/fusionpit/WhatsTraining).
+A Conquest Reborn (WoW 3.3.5a) trainer tracker adapting the original [What's Training?](https://github.com/fusionpit/WhatsTraining) interaction model.
 
-## Usage
+**Use the ? tab attached to the spellbook. There is no permanent on-screen floating button.** Open the spellbook, click the ? icon on its right edge, and view categorized trainer spells with costs and spell tooltips.
 
-A **small floating book button** opens a separate movable training window. Click to toggle it; drag to reposition it; right-click to hide it. The button position is saved. Type `/wtcoa button` to show a hidden button again.
+## Functionality
 
-Visit a class trainer and the addon records its visible training services for the current character. The window offers **All**, **Available**, **Next Level**, **Upcoming**, **Requirements**, and **Learned** filters, with spell icons, tooltips, level requirements, and costs when the client provides those fields.
+- Spellbook-attached trainer view (Available, Next Level, Upcoming, Requires, Known).
+- Captures observed services from class trainers per character; retains them in SavedVariables.
+- Displays spell name, rank, level, cost and tooltip when available from the modified 3.3.5a client.
+- Includes all 21 custom Conquest of Azeroth class names in the class registry.
+- Does not transmit chat messages or replace other addon channels.
+- Intended for Blizzard UI, DragonUI and ElvUI; live compatibility testing is still necessary.
+
+## Limitations
+
+The 13,311 rank records extracted from local client data do not prove trainer/class assignments. Until the trainer assignments are verified, future spells not yet observed cannot be displayed comprehensively. In-game API compatibility and UI overlap need verification.
 
 ## Installation
 
-Download [v1.3.1-dev ZIP](https://github.com/uncle-bone/WhatsTraining-CoA) or use the packaged addon, and extract the `WhatsTraining-CoA` folder into `Interface/AddOns`. The TOC must be `WhatsTraining-CoA/WhatsTraining-CoA.toc`.
+Extract `WhatsTraining-CoA` into `Interface/AddOns`, ensuring the addon contains `WhatsTraining-CoA.toc` directly inside. Open the in-game spellbook, then its ? tab. Open a trainer to populate observations. Diagnostics: `/wtcoa status` and `/wtcoa scan`.
 
-## Accuracy and compatibility
+## Credits and license
 
-Supports a class registry for 21 custom classes. Designed as a standalone window to avoid conflicts with Blizzard, DragonUI and ElvUI frames. **Not yet verified in-game.** The 13,311 archived spell-rank records do not establish class or trainer assignment and are kept as research, not shown as verified trainable spells. The future-spell catalog can only become complete with authoritative trainer assignments.
-
-## Commands (fallback / diagnostics)
-
-- `/wtcoa` – toggle the window.
-- `/wtcoa button` – restore the floating icon.
-- `/wtcoa scan` – scan a currently open trainer.
-- `/wtcoa status` – show observed trainer count.
-
-## Maintainer, attribution, license
-
-CoA adaptation maintained by **Uncle Bone**. Contact: https://github.com/downingwow. Inspired by [What's Training? by fusionpit](https://github.com/fusionpit/WhatsTraining), MIT-licensed; third-party license notices in the package remain intact.
-
-Version: **1.3.1-dev**.
+CoA adaptation: **Uncle Bone** ([contact](https://github.com/downingwow)). Original: [fusionpit/WhatsTraining](https://github.com/fusionpit/WhatsTraining). WotLK port: [anhility/WhatsTraining_WotLK](https://github.com/anhility/WhatsTraining_WotLK). Preserve existing upstream MIT license notices.
