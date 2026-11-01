@@ -95,8 +95,8 @@ local function create()
   if anchor then tab:SetPoint("TOP",anchor,"BOTTOM",0,-4)
   else tab:SetPoint("TOPLEFT",host,"TOPRIGHT",-8,-110)end
  end
- host:HookScript("OnShow",position)
- tab:SetScript("OnShow",position)
+ -- Active spellbook hooks are installed by watchFrames.
+ -- Attachment is refreshed by syncHost, not by a tab OnShow reanchor.
  position()
  panel:SetScript("OnShow",function()tab:SetChecked(true)end)
  panel:SetScript("OnHide",function()tab:SetChecked(false)end)
