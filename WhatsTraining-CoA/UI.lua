@@ -1,6 +1,12 @@
 local _,wt=...
 local host,panel,tab,scroll,rows,searchBox
 local selection="all"
+local watched=setmetatable({},{__mode="k"})
+local function activeHost()
+ local names={"DragonUI_SpellbookFrame","AscensionSpellbookFrame","SpellBookFrame"}
+ for _,name in ipairs(names) do local f=_G[name];if f and f.IsShown and f:IsShown() then return f end end
+ return nil
+end
 local function refresh()
  if not panel or not panel:IsShown() then return end
  local data=wt:GetRows(selection,searchBox and searchBox:GetText() or "")
@@ -25,8 +31,9 @@ local function show(value)
  if value then panel:Show();refresh()else panel:Hide()end
 end
 local function create()
- if panel or not SpellBookFrame then return end
- host=SpellBookFrame
+ if panel then return end
+ host=activeHost()
+ if not host then return end
  panel=CreateFrame("Frame","WhatsTrainingCoAPage",host)
  panel:SetAllPoints(host);panel:SetFrameLevel(host:GetFrameLevel()+3)
  panel:SetBackdrop({bgFile="Interface\\DialogFrame\\UI-DialogBox-Background",edgeFile="Interface\\DialogFrame\\UI-DialogBox-Border",tile=true,tileSize=32,edgeSize=24,insets={left=8,right=8,top=8,bottom=8}})
@@ -69,7 +76,9 @@ local function create()
   b:SetScript("OnLeave",function()GameTooltip:Hide()end)
   rows[i]=b
  end
- tab=CreateFrame("CheckButton","WhatsTrainingCoASpellbookTab",host,"SpellBookSkillLineTabTemplate")
+ tab=CreateFrame("CheckButton","WhatsTrainingCoASpellbookTab",host)
+ tab:SetFrameStrata("DIALOG")
+ tab:SetFrameLevel(host:GetFrameLevel()+8)
  tab:SetSize(32,32)
  tab:SetNormalTexture("Interface\\Icons\\INV_Misc_QuestionMark")
  tab:SetScript("OnClick",function()show(not panel:IsShown())end)
@@ -79,7 +88,7 @@ local function create()
   if not tab or not host then return end
   local anchor
   for i=1,10 do
-   local candidate=_G["SpellBookSkillLineTab"..i]
+   local candidate=host==SpellBookFrame and _G["SpellBookSkillLineTab"..i] or nil
    if candidate and candidate~=tab and candidate:IsShown() then anchor=candidate end
   end
   tab:ClearAllPoints()
@@ -93,11 +102,62 @@ local function create()
  panel:SetScript("OnHide",function()tab:SetChecked(false)end)
  host:HookScript("OnHide",function()show(false)end)
 end
-local events=CreateFrame("Frame");events:RegisterEvent("PLAYER_LOGIN")
-events:SetScript("OnEvent",function()create()end)
+local function syncHost()
+ local current=activeHost()
+ if not current then
+  if panel then panel:Hide() end
+  if tab then tab:Hide() end
+  return
+ end
+ if not panel then create() end
+ if not panel then return end
+ if host~=current then
+  panel:Hide()
+  host=current
+  panel:SetParent(host);panel:ClearAllPoints();panel:SetAllPoints(host)
+  tab:SetParent(host)
+ end
+ tab:SetFrameLevel(host:GetFrameLevel()+8)
+ tab:ClearAllPoints()
+ if host==SpellBookFrame then
+  local anchor
+  for i=1,10 do
+   local candidate=_G["SpellBookSkillLineTab"..i]
+   if candidate and candidate:IsShown() then anchor=candidate end
+  end
+  if anchor then tab:SetPoint("TOP",anchor,"BOTTOM",0,-4)
+  else tab:SetPoint("TOPLEFT",host,"TOPRIGHT",-8,-110) end
+ else
+  tab:SetPoint("TOPLEFT",host,"TOPRIGHT",-8,-92)
+ end
+ tab:Show()
+end
+local events=CreateFrame("Frame")
+events:RegisterEvent("PLAYER_LOGIN")
+events:RegisterEvent("ADDON_LOADED")
+events:RegisterEvent("SPELLS_CHANGED")
+events:SetScript("OnEvent",function()syncHost()end)
+local function watchFrames()
+ for _,name in ipairs({"SpellBookFrame","AscensionSpellbookFrame","DragonUI_SpellbookFrame"}) do
+  local f=_G[name]
+  if f and not watched[f] then
+   watched[f]=true
+   f:HookScript("OnShow",syncHost)
+   f:HookScript("OnHide",syncHost)
+  end
+ end
+end
+local previousSync=syncHost
+syncHost=function()
+ watchFrames()
+ previousSync()
+end
 function wt:ToggleUI()
- create()
- if not host then print("What's Training? CoA: Spellbook unavailable");return end
- if not host:IsShown() then if type(ToggleSpellBook)=="function" then ToggleSpellBook(BOOKTYPE_SPELL) else host:Show()end end
+ syncHost()
+ if not host or not host:IsShown() then
+  if type(ToggleSpellBook)=="function" then ToggleSpellBook(BOOKTYPE_SPELL) end
+  syncHost()
+ end
+ if not host or not host:IsShown() then print("What's Training? CoA: Open your spellbook first");return end
  show(not panel:IsShown())
 end
