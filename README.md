@@ -1,6 +1,6 @@
 # What's Training? CoA
 
-**Latest development build:** v1.3.4-dev · [⬇ Download ZIP](https://github.com/uncle-bone/WhatsTraining-CoA/releases/download/v1.3.4-dev/WhatsTraining-CoA-v1.3.4-dev.zip)
+> **[Download](https://github.com/uncle-bone/WhatsTraining-CoA/releases)**
 
 A Conquest Reborn (WoW 3.3.5a) trainer tracker, adapted by **Uncle Bone** from the [What's Training?](https://github.com/fusionpit/WhatsTraining) interaction model.
 
