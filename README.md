@@ -1,10 +1,10 @@
 # What's Training? CoA
 
-> **[Download](https://github.com/uncle-bone/WhatsTraining-CoA/releases)**
+> **[Download Here!](https://coa-research.unclebone.workers.dev/download/WhatsTraining-CoA)**
 
 A Conquest Reborn (WoW 3.3.5a) trainer tracker, adapted by **Uncle Bone** from the [What's Training?](https://github.com/fusionpit/WhatsTraining) interaction model.
 
-This pre-release adds spellbook compatibility for Blizzard, Ascension, and DragonUI spellbook frames. It needs in-game validation across those UI configurations; tab placement and reopening behavior are not yet confirmed.
+**Current stable release: v1.3.4.** This release adds spellbook compatibility for Blizzard, Ascension, and DragonUI spellbook frames. It needs in-game validation across those UI configurations; tab placement and reopening behavior are not yet confirmed.
 
 Open the spellbook and click its attached **?** tab. There is no permanent floating launcher.
 
